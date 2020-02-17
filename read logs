@@ -1,0 +1,7 @@
+def apache_log_reader(logs.txt):
+  with open(logs.txt) as f:
+    log = f.read()
+    
+if __name__ == '__main__':
+  apache_log_reader('access_log')
+    
