@@ -4,4 +4,4 @@ with open(fname, 'r') as f:
     for line in f:
         if line[11:17]=='24/Oct':
             count+=1
-print("Total number of lines is:", count)
+print("Total number of lines on the 24th of Oct is:", count)
