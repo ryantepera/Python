@@ -1,0 +1,10 @@
+fname = "apache_logs.txt"
+count = 0
+logs=[]
+with open(fname, 'r') as f:
+    for line in f:
+        logs.append(line)
+    logs
+        
+least_common= min(logs[::-1], key=logs.count)
+print(least_common)
