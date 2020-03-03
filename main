@@ -1,0 +1,106 @@
+from urllib.request import urlretrieve
+import re
+import operator 
+from os import path
+
+def main():
+    
+    days = {}
+    month = {}
+    req = {}
+    temp = {}
+    week = {}
+    
+    fname = 'apache_logs.txt'
+    count = 0
+    with open(fname, 'r') as f:
+        for line in f:
+            count += 1
+    print ("Total Numbers of lines is:", count)
+    
+    URL = 'https://s3.amazonaws.com/tcmg476/http_access_log'
+    Lfile = 'local.log'
+
+    lfile, headers = urlretrieve(URL, Lfile, lambda x,y,z: print('.', end='', flush=True) if x % 100 == 0 else False)
+    
+    
+    for log_line in open(fname):
+      count = 0  
+      ERRORS=[]
+      
+      temps = re.compile("([A-Za-z]{5,6}) - - \[([^:]*):(.*) \-[0-9]{4}\] \"([A-Z]+) (.+?)( HTTP.*\"|\") ([2-5]0[0-9]) ([0-9]{0,6})")
+      
+      temp = temps.split(log_line)
+
+      if len(temp) == 10:
+        x = temp[2]
+        if days.get(x, -1) == -1:
+          days[x] = 1
+        else:
+          days[x] += 1  
+        y = temp[7]
+        if req.get(y, -1) == -1:
+          req[y] = 1
+        else:
+          req[y] += 1
+        z = temp[5]
+        if month.get(z, -1) == -1:
+          month[z] = 1
+        else:
+          month[z] += 1
+    for i, j in days.items():
+      print("Requests per Day: ", i, j)
+    currentw = ''
+    weeknum = 1
+    for day,value in days.items():
+      if count == 0:
+        currentw = "Week " + str(weeknum)
+        week[currentw] = value
+        count += 1
+      else:
+        week[currentw] = value + week[currentw]
+        count += 1
+      if count == 7:
+        count = 0 
+        weeknum += 1
+    for day, value in week.items():
+      print ("Requests per week: ", day, value)
+    months = {}
+    count = 0
+    spl = ''
+    for a, b in days.items():
+      spl = a.split('/')
+      spl = spl[1]
+      if months.get(spl, -1) == -1:
+        months[spl] = b
+      else:
+        months[spl] += b
+    for a,b in months.items():
+      print("Requests per Month: ", a,b)
+      
+    Most_frequent = max(month.items(), key=operator.itemgetter(1))[0]
+    least_frequent = min(month.items(), key=operator.itemgetter(1))[0]
+
+    print('\n')
+    fname = "apache_logs.txt"
+    count = 0
+    logs=[]
+    with open(fname, 'r') as f:
+        for line in f:
+            logs.append(line)
+            
+    def most_frequent(List): 
+        dict = {} 
+        count, itm = 0, '' 
+        for item in reversed(List): 
+            dict[item] = dict.get(item, 0) + 1
+            if dict[item] >= count : 
+                count, itm = dict[item], item 
+        return(itm) 
+    print(most_frequent(logs)) 
+    print ("Redirection Requests: ", round(count/(128087),2), "%")
+    print ("The most requested file is:", Most_frequent)
+    print ("The least requested file is:", least_frequent)
+          
+if __name__ == "__main__":
+    main()    
