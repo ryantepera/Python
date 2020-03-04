@@ -25,7 +25,7 @@ def main():
     
     
     for log_line in open(fname):
-      count = 0  
+      counter = 0  
       ERRORS=[]
       
       temps = re.compile("([A-Za-z]{5,6}) - - \[([^:]*):(.*) \-[0-9]{4}\] \"([A-Z]+) (.+?)( HTTP.*\"|\") ([2-5]0[0-9]) ([0-9]{0,6})")
@@ -53,20 +53,20 @@ def main():
     currentw = ''
     weeknum = 1
     for day,value in days.items():
-      if count == 0:
+      if counter == 0:
         currentw = "Week " + str(weeknum)
         week[currentw] = value
-        count += 1
+        counter += 1
       else:
         week[currentw] = value + week[currentw]
-        count += 1
-      if count == 7:
-        count = 0 
+        counter += 1
+      if counter == 7:
+        counter = 0 
         weeknum += 1
     for day, value in week.items():
       print ("Requests per week: ", day, value)
     months = {}
-    count = 0
+    counter = 0
     spl = ''
     for a, b in days.items():
       spl = a.split('/')
@@ -84,21 +84,33 @@ def main():
     print('\n')
     fname = "apache_logs.txt"
     count = 0
-    logs=[]
+    total = 0
     with open(fname, 'r') as f:
         for line in f:
-            logs.append(line)
-            
-    def most_frequent(List): 
-        dict = {} 
-        count, itm = 0, '' 
-        for item in reversed(List): 
-            dict[item] = dict.get(item, 0) + 1
-            if dict[item] >= count : 
-                count, itm = dict[item], item 
-        return(itm) 
-    print(most_frequent(logs)) 
-    print ("Redirection Requests: ", round(count/(128087),2), "%")
+            total += 1
+            total
+    with open(fname, 'r') as f:
+        for line in f:
+            if line[-6]=='4':
+                count+=1
+        
+                percentage = total/count
+    print(round(percentage,2), '% were not successful')
+                
+    fname = "apache_logs.txt"
+    count = 0
+    total = 0
+    with open(fname, 'r') as f:
+        for line in f:
+            total += 1
+            total
+    with open(fname, 'r') as f:
+        for line in f:
+            if line[-6]=='3':
+                count+=1
+        
+    percentage = total/count
+    print(round(percentage,2), '% were redirected')
     print ("The most requested file is:", Most_frequent)
     print ("The least requested file is:", least_frequent)
           
